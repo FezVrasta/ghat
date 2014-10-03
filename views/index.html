@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+        <link href="/bc/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/style.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="cont container-fluid sk-h100">
+            <div class="col-xs-10 sk-h100"> <!-- CHAT BOX -->
+                <div class="well box">
+                    <div class="cards">
+                        <div class="card active" data-channel="initial">initial <span class="close">&times;</span></div>
+                    </div>
+                    <div class="col-xs-10 sk-h100">
+                        <div class="row sk-h100-px">
+                            <div class="col-xs-12" id="channelswrapper">
+                                <ul data-channel="initial" class="channelbox active"></ul>
+                            </div>
+                        </div>
+                        <div class="row writehere">
+                            <div class="col-xs-12">
+                                <form id="chatform" action="">
+                                    <input id="m" autocomplete="off"  type="text" class="form-control">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-2 sk-h100 channelswrapper">
+                        <div class="actions">
+                            <button class="btn btn-default showchannels">Channels</button><button class="btn btn-default showusers">Users</button><button class="btn btn-default showoptions">Options</button>
+                        </div>
+                        <div id="channels">
+
+                        </div>
+                        <div id="users">
+
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /CHAT BOX -->
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Login</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form id="loginform" role="form">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Username</label>
+                                <input type="text" class="form-control" name="username" placeholder="Super Mario">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/bc/jquery/dist/jquery.min.js"></script>
+        <script src="/bc/jquery-cookie/jquery.cookie.js"></script>
+        <script src="/bc/bootstrap/dist/js/bootstrap.min.js"></script>
+
+        <script src="/chat.js"></script>
+    </body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "Ghat",
+  "main": "index.js",
+  "version": "0.0.0",
+  "homepage": "http://mywebexpression.com/",
+  "authors": [
+    "Federico Zivolo <info@mywebexpression.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.2.0",
+    "jquery-cookie": "~1.4.1",
+    "snackbarjs": "*"
+  }
+}
