@@ -102,5 +102,5 @@ $("#chatform").submit(function(){
 socket.on("chat message", function(message){
     var row = $("<li>").html("<span class=\"username\">" + message.username + "</span>: " + message.text);
     $("#channelswrapper [data-channel='" + message.channel + "']").append(row);
-    $(".channelbox").scrollTop($(".channelbox").height());
+    $(".channelbox").scrollTop($(".channelbox")[0].scrollHeight);
 });
