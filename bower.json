@@ -17,6 +17,7 @@
   "dependencies": {
     "bootstrap": "~3.2.0",
     "jquery-cookie": "~1.4.1",
-    "snackbarjs": "*"
+    "snackbarjs": "*",
+    "bootstrap-material-design": "*"
   }
 }

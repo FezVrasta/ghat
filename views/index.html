@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Chat</title>
-        <link href="/bc/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link href="/style.css" rel="stylesheet">
+        <title>Ghat - GitHub Chat</title>
+        <link href="{{#eURL}}/bc/bootstrap/dist/css/bootstrap.min.css{{/eURL}}" rel="stylesheet">
+        <link href="{{#eURL}}/bc/bootstrap-material-design/css-compiled/material-wfont.min.css{{/eURL}}" rel="stylesheet">
+        <link href="{{#eURL}}/style.css{{/eURL}}" rel="stylesheet">
     </head>
     <body>
         <div class="cont container-fluid sk-h100">
@@ -28,7 +29,7 @@
                     </div>
                     <div class="col-xs-2 sk-h100 channelswrapper">
                         <div class="actions">
-                            <button class="btn btn-default showchannels">Channels</button><button class="btn btn-default showusers">Users</button><button class="btn btn-default showoptions">Options</button>
+                            <button class="btn btn-default showchannels">{{s.CHANNELS}}</button><button class="btn btn-default showusers">Users</button><button class="btn btn-default showoptions">Options</button>
                         </div>
                         <div id="channels">
 
@@ -62,10 +63,12 @@
         </div>
 
         <script src="/socket.io/socket.io.js"></script>
-        <script src="/bc/jquery/dist/jquery.min.js"></script>
-        <script src="/bc/jquery-cookie/jquery.cookie.js"></script>
-        <script src="/bc/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="{{#eURL}}/bc/jquery/dist/jquery.min.js{{/eURL}}"></script>
+        <script src="{{#eURL}}/bc/jquery-cookie/jquery.cookie.js{{/eURL}}"></script>
+        <script src="{{#eURL}}/bc/bootstrap/dist/js/bootstrap.min.js{{/eURL}}"></script>
+        <link href="{{#eURL}}/bc/bootstrap-material-design/scripts/ripples.js{{/eURL}}" rel="stylesheet">
+        <link href="{{#eURL}}/bc/bootstrap-material-design/scripts/material.js{{/eURL}}" rel="stylesheet">
 
-        <script src="/chat.js"></script>
+        <script src="{{#eURL}}/chat.js{{/eURL}}"></script>
     </body>
 </html>

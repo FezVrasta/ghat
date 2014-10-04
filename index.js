@@ -1,5 +1,6 @@
 var express             = require("express"),
     app                 = express(),
+    electricity         = require("electricity"),
     http                = require("http").Server(app),
     io                  = require("socket.io")(http),
     mustacheExpress     = require("mustache-express"),
@@ -7,14 +8,33 @@ var express             = require("express"),
     bbcode              = require("bbcode").parse,
     _                   = require("lodash");
 
+var strings             = require("./strings.json");
+
 // Serve public files
-app.use("/", express.static(__dirname + "/public"));
+app.use("/", electricity.static(__dirname + "/public"));
 app.use("/bc", express.static(__dirname + "/bower_components"));
 
 // Setup Mustache
 app.engine("html", mustacheExpress());
 app.set("view engine", "mustache");
 app.set("views", __dirname + "/views");
+
+// Electricity URL support for Mustache
+app.use(function(req, res, next) {
+    req.app.locals.eURL = function() {
+        return function(text) {
+            return req.app.locals.electricity.url(text);
+        };
+    };
+    next();
+});
+
+// Expose strings.js to Mustache renderer
+app.use(function(req, res, next) {
+    // TODO: replace en_GB with express-locale middleware
+    req.app.locals.s = strings.en;
+    next();
+});
 
 // Send index page
 app.get("/", function(req, res) {
@@ -65,7 +85,11 @@ io.on("connection", function(socket){
             }
         });
 
-        io.emit("chat message", {channel: action.channel, username: "Room bot", text: bbcode("[B]" + action.username + "[/B] has joined the [B]" + action.channel + "[/B] room.")});
+        io.emit("chat message", {
+            channel: action.channel,
+            username: "Room bot",
+            text: bbcode("[B]" + action.username + "[/B] has joined the [B]" + action.channel + "[/B] room.")
+        });
     });
 
     socket.on("channels leave", function(action) {
@@ -77,7 +101,11 @@ io.on("connection", function(socket){
             return channel;
         });
         io.emit("channels users", channels);
-        io.emit("chat message", {channel: action.channel, username: "Room bot", text: bbcode("[B]" + action.username + "[/B] has left the [B]" + action.channel + "[/B] room.")});
+        io.emit("chat message", {
+            channel: action.channel,
+            username: "Room bot",
+            text: bbcode("[B]" + action.username + "[/B] has left the [B]" + action.channel + "[/B] room.")
+        });
     });
 });
 
