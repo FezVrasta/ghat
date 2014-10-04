@@ -6,6 +6,7 @@ var express             = require("express"),
     mustacheExpress     = require("mustache-express"),
     strip               = require("strip"),
     bbcode              = require("bbcode").parse,
+    md                  = require("markdown").markdown.toHTML,
     _                   = require("lodash");
 
 var strings             = require("./strings.json");
@@ -64,6 +65,8 @@ io.on("connection", function(socket){
     socket.on("chat message", function(message){
         // Strip HTML from text message
         message.text = strip(message.text);
+        // Parse Markdown
+        message.text = md(message.text);
         // Parse BBCODE
         message.text = bbcode(message.text);
         // Emit message
@@ -88,7 +91,7 @@ io.on("connection", function(socket){
         io.emit("chat message", {
             channel: action.channel,
             username: "Room bot",
-            text: bbcode("[B]" + action.username + "[/B] has joined the [B]" + action.channel + "[/B] room.")
+            text: md("**" + action.username + "** has joined the **" + action.channel + "** room.")
         });
     });
 
@@ -104,7 +107,7 @@ io.on("connection", function(socket){
         io.emit("chat message", {
             channel: action.channel,
             username: "Room bot",
-            text: bbcode("[B]" + action.username + "[/B] has left the [B]" + action.channel + "[/B] room.")
+            text: md("**" + action.username + "** has left the **" + action.channel + "** room.")
         });
     });
 });

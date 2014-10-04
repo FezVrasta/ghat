@@ -74,14 +74,14 @@ if (!session.username) {
         keyboard: false
     });
 } else {
-    socket.emit("chat message", {channel: "initial", username: "Welcome bot", text: "Welcome back [B]" + session.username + "[/B]!"});
+    socket.emit("chat message", {channel: "initial", username: "Welcome bot", text: "Welcome back **" + session.username + "**!"});
     socket.emit("channels enter", {username: session.username, channel: session.channel});
 }
 
 
 $("#loginform").submit(function() {
     session.username = $(this).find("[name=username]").val();
-    socket.emit("chat message", {channel: session.channel, username: "Welcome bot", text: "Welcome [B]" + session.username + "[/B] to this chat"});
+    socket.emit("chat message", {channel: session.channel, username: "Welcome bot", text: "Welcome **" + session.username + "** to this chat"});
     socket.emit("channels enter", {username: session.username, channel: session.channel});
     $.cookie("username", session.username);
     $("#login").modal("hide");

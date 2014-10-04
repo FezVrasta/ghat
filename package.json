@@ -1,12 +1,17 @@
 {
   "name": "Ghat",
   "version": "0.0.1",
-  "description": "",
+  "description": "GitHub Chat",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FezVrasta/ghat.git"
+  },
   "dependencies": {
     "bbcode": "^0.1.5",
     "electricity": "^1.2.2",
     "express": "4.3.1",
     "lodash": "^2.4.1",
+    "markdown": "^0.5.0",
     "mongodb": "^1.4.10",
     "mustache": "^0.8.2",
     "mustache-express": "^1.2.0",

@@ -28,6 +28,9 @@
 .channelbox.active {
   display: block;
 }
+.channelbox > li > p {
+  display: inline;
+}
 #channels .channel {
   cursor: pointer;
   padding: 0px 10px;
