@@ -7,7 +7,9 @@ var express             = require("express"),
     strip               = require("strip"),
     bbcode              = require("bbcode").parse,
     md                  = require("markdown").markdown.toHTML,
-    _                   = require("lodash");
+    _                   = require("lodash"),
+    request             = require("request"),
+    async               = require("async");
 
 var strings             = require("./strings.json");
 
@@ -42,6 +44,9 @@ app.get("/", function(req, res) {
     res.render("index.html");
 });
 
+
+
+
 var channels = [
     {
         name: "initial",
@@ -66,7 +71,27 @@ var github = {
     issueURL: function() {
         return "https://github.com/" + this.namespace + "/" + this.repository + "/issues";
     },
-    userURL: "https://github.com"
+    userURL: "https://github.com",
+    commitURL: function() {
+        return "https://github.com/" + this.namespace + "/" + this.repository + "/commit";
+    },
+    testCommitURL: function(hash, callback) {
+        var url = github.commitURL() + "/" + hash;
+
+        request({
+            url: "https://api.github.com/repos/" + this.namespace + "/" + this.repository + "/commits/" + hash,
+            headers: {
+                "User-Agent": "Ghat - GitHub Chat"
+            }
+        }, function (error, response) {
+            console.log(JSON.parse(response.body).message);
+            if (error || JSON.parse(response.body).message == "Not Found") {
+                callback(hash);
+            } else {
+                callback("[" + hash + "](" + url + ")");
+            }
+        });
+    }
 };
 
 io.on("connection", function(socket){
@@ -75,42 +100,85 @@ io.on("connection", function(socket){
 
     // Get messages
     socket.on("chat message", function(message){
-        // Strip HTML from text message
-        message.text = strip(message.text);
 
-        // Find issues references
-        message.text = (function() {
-            if (message.namespace) {
-                github.namespace = message.namespace;
-                github.repository = message.channel;
-                return message.text.replace(/#(\d+)/g, "[#$1](" + github.issueURL() + "/$1)");
-            } else {
-                return message.text;
+        var text = message.text;
+        async.waterfall([
+
+            function(next) {
+                // Strip HTML from text message
+                next(null, strip(text));
+            },
+            function(text, next) {
+                // Find issues references
+                if (message.namespace) {
+                    github.namespace = message.namespace;
+                    github.repository = message.channel;
+                    text = text.replace(/#(\d+)/g, "[#$1](" + github.issueURL() + "/$1)");
+                }
+                next(null, text);
+            },
+            function(text, next) {
+                // Username rules:
+                // 1. Alphanumerics and underscores only
+                // 2. min 2 and max 15
+                // 3. cannot start with underscore
+                // 4. underscore cannot appear next to each other (__)
+
+                // The current regex does not fullfill the point 4
+                text = message.text.replace(/@((?!_)[A-z0-9_]{2,15})/g, "[@$1](" + github.userURL + "/$1)");
+                next(null, text);
+            },
+            function(text, next) {
+
+                // Detect only SHA1 long min 7 and max 40
+                if (message.namespace) {
+                    github.namespace = message.namespace;
+                    github.repository = message.channel;
+
+                    var matches = text.match(/\b([0-9a-f]{7,40})\b/g, github.testCommitURL);
+
+                    if (matches.length) {
+                        async.each(matches, function(sha, done) {
+
+                            github.testCommitURL(sha, function(shatext) {
+                                text = text.replace(sha, shatext);
+                                done();
+                            });
+
+                        }, function() {
+                            next(null, text);
+                        });
+                    } else {
+                        next(null, text);
+                    }
+
+                } else {
+                    next(null, text);
+                }
+
+            },
+            function(text, next) {
+                // Parse Markdown
+                next(null, md(text));
+            },
+            function(text, next) {
+                // Parse BBCODE
+                next(null, bbcode(text));
             }
-        }());
 
-        // Find users references
-        message.text = (function() {
 
-            // Username rules:
-            // 1. Alphanumerics and underscores only
-            // 2. min 2 and max 15
-            // 3. cannot start with underscore
-            // 4. underscore cannot appear next to each other (__)
+        ], function(err, text) {
+            message.text = text;
 
-            // The current regex does not fullfill the point 4
+            console.log(message);
 
-            github.namespace = message.namespace;
-            github.repository = message.channel;
-            return message.text.replace(/@((?!_)[A-z0-9_]{2,15})/g, "[@$1](" + github.userURL + "/$1)");
-        }());
+            // Emit message
+            io.emit("chat message", message);
+        });
 
-        // Parse Markdown
-        message.text = md(message.text);
-        // Parse BBCODE
-        message.text = bbcode(message.text);
-        // Emit message
-        io.emit("chat message", message);
+
+        // Find commit SHA1 IDs
+
     });
 
     socket.on("channels enter", function(action) {
