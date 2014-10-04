@@ -16,7 +16,7 @@ var $channels = $("#channels");
 socket.on("channels users", function(channels) {
     $channels.empty();
     channels.forEach(function(channel) {
-        var $channel = $("<div class=channel data-channel=\"" + channel.name + "\"><span class=counter>" + channel.users.length + "</span>" + channel.name + "</div>");
+        var $channel = $("<div class=channel data-channel=\"" + channel.name + "\" data-namespace=\"" + channel.namespace + "\"><span class=counter>" + channel.users.length + "</span>" + channel.name + "</div>");
         if (channel.name == session.channel) {
             $channel.addClass("active");
         }
@@ -38,6 +38,8 @@ $(document).on("click", ".channel, .card", function(e) {
 
     var chan = $(this).attr("data-channel");
     session.channel = chan;
+    session.namespace = $(this).attr("data-namespace");
+
     $("#channelswrapper .channelbox").removeClass("active");
     if ($("#channelswrapper [data-channel='" + chan + "']").length) {
         $("[data-channel='" + chan + "']").addClass("active");
@@ -91,6 +93,7 @@ $("#loginform").submit(function() {
 $("#chatform").submit(function(){
     var message = {
         channel: session.channel,
+        namespace: session.namespace,
         username: session.username,
         text: $("#m").val()
     };
