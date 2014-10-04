@@ -66,7 +66,7 @@ var github = {
     issueURL: function() {
         return "https://github.com/" + this.namespace + "/" + this.repository + "/issues";
     },
-    userURL: "https://github.com/"
+    userURL: "https://github.com"
 };
 
 io.on("connection", function(socket){
