@@ -11,6 +11,11 @@ var session = {
     channel: "initial"
 };
 
+// If cookie is set then auto-login user
+if ($.cookie("username")) {
+    socket.emit("chat login", {username: $.cookie("username")});
+}
+
 // Init channels list and keep updated
 var $channels = $("#channels");
 socket.on("channels users", function(channels) {
@@ -83,6 +88,7 @@ if (!session.username) {
 
 $("#loginform").submit(function() {
     session.username = $(this).find("[name=username]").val();
+    socket.emit("chat login", {username: session.username});
     socket.emit("chat message", {channel: session.channel, username: "Welcome bot", text: "Welcome **" + session.username + "** to this chat"});
     socket.emit("channels enter", {username: session.username, channel: session.channel});
     $.cookie("username", session.username);

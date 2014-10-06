@@ -84,7 +84,6 @@ var github = {
                 "User-Agent": "Ghat - GitHub Chat"
             }
         }, function (error, response) {
-            console.log(JSON.parse(response.body).message);
             if (error || JSON.parse(response.body).message == "Not Found") {
                 callback(hash);
             } else {
@@ -95,6 +94,19 @@ var github = {
 };
 
 io.on("connection", function(socket){
+
+    socket.on("chat login", function(user) {
+        socket.username = user.username;
+    });
+
+    socket.on("disconnect", function() {
+
+        channels = _.map(channels, function(channel) {
+            channel.users.splice(channel.users.indexOf(socket.username), 1);
+            return channel;
+        });
+        io.emit("channels users", channels);
+    });
 
     io.emit("channels users", channels);
 
@@ -170,8 +182,6 @@ io.on("connection", function(socket){
         ], function(err, text) {
             message.text = text;
 
-            console.log(message);
-
             // Emit message
             io.emit("chat message", message);
         });
@@ -220,6 +230,6 @@ io.on("connection", function(socket){
     });
 });
 
-http.listen(3000, function(){
-    console.log("Chat started at localhost:3000");
+http.listen(3001, function(){
+    console.log("Chat started at localhost:3001");
 });
