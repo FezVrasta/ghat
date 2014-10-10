@@ -137,6 +137,10 @@ io.on("connection", function(socket){
                 // 4. underscore cannot appear next to each other (__)
 
                 // The current regex does not fullfill the point 4
+                message.mentions = _.map(message.text.match(/@((?!_)[A-z0-9_]{2,15})/g), function(user) {
+                    return user;
+                });
+
                 text = message.text.replace(/@((?!_)[A-z0-9_]{2,15})/g, "[@$1](" + github.userURL + "/$1)");
                 next(null, text);
             },
