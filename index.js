@@ -230,6 +230,28 @@ io.on("connection", function(socket){
     });
 });
 
+app.get("/status/:channel/badge.png", function(req, res) {
+
+    var users = 0;
+    async.each(channels, function(channel, next) {
+
+        if (channel.name == req.params.channel) {
+            users = channel.users.length;
+        }
+        next();
+
+    }, function() {
+        var badge;
+        if (users) {
+            badge = "public/imgs/badge-online.png";
+        } else {
+            badge = "public/imgs/badge-offline.png";
+        }
+        res.sendfile(badge);
+    });
+
+});
+
 http.listen(3001, function(){
     console.log("Chat started at localhost:3001");
 });
