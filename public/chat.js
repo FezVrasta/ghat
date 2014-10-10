@@ -9,16 +9,29 @@
     });
 })(jQuery);
 
-$(window).on("resize", function() {
-    $("body").height($(this).height());
-}).trigger("resize");
+
 
 var socket = io();
 
 var session = {
     username: ($.cookie("username")) ? $.cookie("username") : null,
-    channel: "initial"
+    channel: "initial",
+    notifications: 0
 };
+
+// Window focus helper
+var windowFocus = true;
+$(window).focus(function() {
+    windowFocus = true;
+    session.notifications = 0;
+    document.title = "Ghat - GitHub Chat";
+}).blur(function() {
+    windowFocus = false;
+});
+
+$(window).on("resize", function() {
+    $("body").height($(this).height());
+}).trigger("resize");
 
 // If cookie is set then auto-login user
 if ($.cookie("username")) {
@@ -124,6 +137,11 @@ socket.on("chat message", function(message){
         if ($.inArray("@" + session.username, message.mentions) !== -1) {
             $.playSound("/media/blop");
         }
+    }
+
+    if (!windowFocus) {
+        session.notifications = session.notifications + 1;
+        document.title = "(" + session.notifications + ") Ghat - GitHub Chat";
     }
 
     var row = $("<li>").html("<span class=\"username\">" + message.username + "</span>: " + message.text);
