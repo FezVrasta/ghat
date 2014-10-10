@@ -135,7 +135,9 @@ socket.on("chat message", function(message){
     // Play notification sound if user is mentioned
     if (message.mentions) {
         if ($.inArray("@" + session.username, message.mentions) !== -1) {
-            $.playSound("/media/blop");
+            if (!windowFocus) {
+                $.playSound("/media/blop");
+            }
         }
     }
 
